@@ -11,6 +11,12 @@ app.get("/", (req, res) => {
 });
 app.use("/produtos", produtoRoutes);
 app.use("/categorias", categoriaRoutes);
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
-});
+
+if (require.main === module) {
+  const porta = Number(process.env.PORT) || 3000;
+  app.listen(porta, () => {
+    console.log(`Servidor rodando na porta ${porta}`);
+  });
+}
+
+module.exports = app;
