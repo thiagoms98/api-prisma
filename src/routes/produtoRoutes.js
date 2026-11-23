@@ -1,9 +1,19 @@
 const express = require("express");
-const router = express.Router();
 const produtoController = require("../controllers/produtoController");
-router.get("/", produtoController.listar);
-router.get("/:id", produtoController.buscarPorId);
-router.post("/", produtoController.criar);
-router.put("/:id", produtoController.atualizar);
-router.delete("/:id", produtoController.deletar);
-module.exports = router;
+
+function criarProdutoRoutes(prisma) {
+  const router = express.Router();
+  const controller = prisma
+    ? produtoController.comPrisma(prisma)
+    : produtoController;
+
+  router.get("/", controller.listar);
+  router.get("/:id", controller.buscarPorId);
+  router.post("/", controller.criar);
+  router.put("/:id", controller.atualizar);
+  router.delete("/:id", controller.deletar);
+
+  return router;
+}
+
+module.exports = criarProdutoRoutes;

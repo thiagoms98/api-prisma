@@ -1,16 +1,23 @@
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 const express = require("express");
 const cors = require("cors");
-const produtoRoutes = require("./routes/produtoRoutes");
+const prismaPadrao = require("./config/prisma");
+const criarProdutoRoutes = require("./routes/produtoRoutes");
 const categoriaRoutes = require("./routes/categoriaRoutes");
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.get("/", (req, res) => {
-  res.send("API de produtos funcionando");
-});
-app.use("/produtos", produtoRoutes);
-app.use("/categorias", categoriaRoutes);
+
+function criarApp(prisma = prismaPadrao) {
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.get("/", (req, res) => {
+    res.send("API de produtos funcionando");
+  });
+  app.use("/produtos", criarProdutoRoutes(prisma));
+  app.use("/categorias", categoriaRoutes);
+  return app;
+}
+
+const app = criarApp();
 
 if (require.main === module) {
   const porta = Number(process.env.PORT) || 3000;
@@ -20,3 +27,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+module.exports.criarApp = criarApp;
